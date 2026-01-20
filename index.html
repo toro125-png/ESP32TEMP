@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUVN - Monitoreo Térmico</title>
+    <!-- Tailwind CSS para el diseño Azul y Rojo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconos -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Fuente Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        /* Animación suave para las tarjetas */
+        .sensor-card {
+            transition: all 0.3s ease;
+        }
+        .sensor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        /* Animación de parpadeo para el punto de estado */
+        .ping-dot {
+            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes ping {
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <!-- HEADER INSTITUCIONAL (Azul y Rojo) -->
+    <header class="bg-blue-900 text-white shadow-lg border-b-4 border-red-600">
+        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Logo y Nombre -->
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-2 rounded-full">
+                    <i data-lucide="graduation-cap" class="w-8 h-8 text-blue-900"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">TUVN</h1>
+                    <p class="text-xs text-blue-200 font-semibold tracking-widest">AUTOMATIZACIÓN E INSTRUMENTACIÓN</p>
+                </div>
+            </div>
+
+            <!-- Estado de Conexión -->
+            <div class="flex items-center gap-3 bg-blue-950/50 px-4 py-2 rounded-lg border border-blue-400/30">
+                <div class="relative flex h-3 w-3">
+                  <span id="pingDot" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 hidden"></span>
+                  <span id="staticDot" class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </div>
+                <span id="statusText" class="text-sm font-mono text-red-200">Desconectado</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE INFORMACIÓN (Docente y Hora) -->
+    <div class="bg-white border-b border-slate-200 shadow-sm">
+        <div class="container mx-auto px-4 py-2 flex flex-wrap justify-between items-center text-sm text-slate-600">
+            <div class="flex items-center gap-2">
+                <i data-lucide="user-circle" class="w-4 h-4 text-red-600"></i>
+                <span class="font-medium">Desarrollador: <span class="text-blue-900 font-bold">Carlos Ruiz</span></span>
+            </div>
+            <div class="flex gap-4 font-mono text-slate-500">
+                <span id="dateDisplay">--/--/----</span>
+                <span id="timeDisplay" class="text-blue-700 font-bold">--:--:--</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        
+        <!-- Título Práctica -->
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-slate-800">Monitoreo de Temperatura Multipunto</h2>
+            <p class="text-slate-500 mt-1">Bus de Datos OneWire - Sensores DS18B20</p>
+        </div>
+
+        <!-- GRID DE SENSORES (4 Tarjetas) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <!-- Sensor 1 -->
+            <div class="sensor-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-blue-600 p-3 flex justify-between items-center">
+                    <h3 class="text-white font-bold">SENSOR 1</h3>
+                    <i data-lucide="thermometer" class="text-blue-200 w-5 h-5"></i>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="text-5xl font-bold text-slate-800" id="val1">--</div>
+                    <div class="text-slate-400 mt-2 text-sm">Grados Celsius (°C)</div>
+                </div>
+            </div>
+
+            <!-- Sensor 2 -->
+            <div class="sensor-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-red-600 p-3 flex justify-between items-center">
+                    <h3 class="text-white font-bold">SENSOR 2</h3>
+                    <i data-lucide="thermometer" class="text-red-200 w-5 h-5"></i>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="text-5xl font-bold text-slate-800" id="val2">--</div>
+                    <div class="text-slate-400 mt-2 text-sm">Grados Celsius (°C)</div>
+                </div>
+            </div>
+
+            <!-- Sensor 3 -->
+            <div class="sensor-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-blue-600 p-3 flex justify-between items-center">
+                    <h3 class="text-white font-bold">SENSOR 3</h3>
+                    <i data-lucide="thermometer" class="text-blue-200 w-5 h-5"></i>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="text-5xl font-bold text-slate-800" id="val3">--</div>
+                    <div class="text-slate-400 mt-2 text-sm">Grados Celsius (°C)</div>
+                </div>
+            </div>
+
+            <!-- Sensor 4 -->
+            <div class="sensor-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-red-600 p-3 flex justify-between items-center">
+                    <h3 class="text-white font-bold">SENSOR 4</h3>
+                    <i data-lucide="thermometer" class="text-red-200 w-5 h-5"></i>
+                </div>
+                <div class="p-6 text-center">
+                    <div class="text-5xl font-bold text-slate-800" id="val4">--</div>
+                    <div class="text-slate-400 mt-2 text-sm">Grados Celsius (°C)</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BOTÓN CONECTAR -->
+        <div class="mt-12 flex justify-center">
+            <button id="connectBtn" onclick="toggleConnection()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 px-10 rounded-full shadow-xl flex items-center gap-3 transition-transform hover:scale-105 active:scale-95">
+                <i data-lucide="bluetooth" class="w-6 h-6"></i>
+                <span>CONECTAR DISPOSITIVO</span>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-500 py-6 text-center text-xs border-t-4 border-red-600">
+        <p>© 2025 Instituto Superior Tecnológico Vida Nueva</p>
+    </footer>
+
+    <!-- JAVASCRIPT LÓGICO -->
+    <script>
+        // Inicializar iconos
+        lucide.createIcons();
+
+        // --- 1. RELOJ AUTOMÁTICO ---
+        function updateClock() {
+            const now = new Date();
+            // Fecha
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('es-EC', optionsDate);
+            // Hora
+            document.getElementById('timeDisplay').textContent = now.toLocaleTimeString('es-EC');
+        }
+        setInterval(updateClock, 1000);
+        updateClock(); // Ejecutar al inicio
+
+        // --- 2. LÓGICA BLUETOOTH (Web Bluetooth API) ---
+        
+        // UUIDs (Deben coincidir con el ESP32)
+        const serviceUuid = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+        const characteristicUuid = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+
+        let bluetoothDevice;
+        let bleCharacteristic;
+
+        // Referencias UI
+        const connectBtn = document.getElementById('connectBtn');
+        const statusText = document.getElementById('statusText');
+        const pingDot = document.getElementById('pingDot');
+        const staticDot = document.getElementById('staticDot');
+        const val1 = document.getElementById('val1');
+        const val2 = document.getElementById('val2');
+        const val3 = document.getElementById('val3');
+        const val4 = document.getElementById('val4');
+
+        async function toggleConnection() {
+            if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                disconnect();
+            } else {
+                connect();
+            }
+        }
+
+        async function connect() {
+            try {
+                // UI Cargando
+                connectBtn.innerHTML = '<span class="animate-spin">⌛</span> BUSCANDO...';
+                
+                // 1. Escanear
+                console.log('Buscando dispositivo...');
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: 'TUVN_Termometros' }], // Mismo nombre que en el Arduino
+                    optionalServices: [serviceUuid]
+                });
+
+                bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+
+                // 2. Conectar
+                const server = await bluetoothDevice.gatt.connect();
+                const service = await server.getPrimaryService(serviceUuid);
+                bleCharacteristic = await service.getCharacteristic(characteristicUuid);
+
+                // 3. Activar Notificaciones (Para recibir datos automáticamente)
+                await bleCharacteristic.startNotifications();
+                bleCharacteristic.addEventListener('characteristicvaluechanged', handleData);
+
+                console.log('¡Conectado!');
+                updateUIConnected();
+
+            } catch (error) {
+                console.log('Error de conexión:', error);
+                updateUIDisconnected();
+            }
+        }
+
+        function disconnect() {
+            if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                bluetoothDevice.gatt.disconnect();
+            }
+        }
+
+        function onDisconnected() {
+            console.log('Desconectado.');
+            updateUIDisconnected();
+        }
+
+        // --- 3. PROCESAMIENTO DE DATOS ---
+        function handleData(event) {
+            // Recibimos los bytes del ESP32
+            const value = event.target.value;
+            const decoder = new TextDecoder('utf-8');
+            const jsonString = decoder.decode(value);
+
+            console.log("Dato recibido:", jsonString); // Debug en consola
+
+            try {
+                // Convertir texto JSON a Objeto JavaScript
+                // Ejemplo recibido: {"s1":22.5,"s2":24.1,"s3":23.0,"s4":22.8}
+                const data = JSON.parse(jsonString);
+
+                // Actualizar la pantalla si el dato existe
+                if(data.s1 !== undefined) val1.innerText = data.s1.toFixed(1);
+                if(data.s2 !== undefined) val2.innerText = data.s2.toFixed(1);
+                if(data.s3 !== undefined) val3.innerText = data.s3.toFixed(1);
+                if(data.s4 !== undefined) val4.innerText = data.s4.toFixed(1);
+
+                // Efecto visual de "latido" al recibir datos
+                pingDot.classList.remove('hidden');
+                setTimeout(() => {
+                    pingDot.classList.add('hidden');
+                }, 500);
+
+            } catch (e) {
+                console.error("Error al leer JSON:", e);
+            }
+        }
+
+        // --- FUNCIONES UI ---
+        function updateUIConnected() {
+            connectBtn.innerHTML = 'DESCONECTAR SISTEMA';
+            connectBtn.classList.remove('bg-slate-800', 'hover:bg-slate-700');
+            connectBtn.classList.add('bg-red-700', 'hover:bg-red-600');
+            
+            statusText.innerText = "CONECTADO";
+            statusText.classList.replace('text-red-200', 'text-emerald-400');
+            staticDot.classList.replace('bg-red-500', 'bg-emerald-500');
+        }
+
+        function updateUIDisconnected() {
+            connectBtn.innerHTML = '<i data-lucide="bluetooth" class="w-6 h-6"></i> CONECTAR DISPOSITIVO';
+            lucide.createIcons(); // Recargar icono
+            connectBtn.classList.add('bg-slate-800', 'hover:bg-slate-700');
+            connectBtn.classList.remove('bg-red-700', 'hover:bg-red-600');
+
+            statusText.innerText = "DESCONECTADO";
+            statusText.classList.replace('text-emerald-400', 'text-red-200');
+            staticDot.classList.replace('bg-emerald-500', 'bg-red-500');
+            pingDot.classList.add('hidden');
+
+            // Resetear valores a "--"
+            val1.innerText = "--";
+            val2.innerText = "--";
+            val3.innerText = "--";
+            val4.innerText = "--";
+        }
+    </script>
+</body>
+</html>
