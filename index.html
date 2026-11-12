@@ -37,7 +37,7 @@
                 <div class="relative flex h-3 w-3">
                   <span id="staticDot" class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </div>
-                <span id="statusText" class="text-sm font-mono text-emerald-300">Modo API Activo</span>
+                <span id="statusText" class="text-sm font-mono text-emerald-300">API Configurada</span>
             </div>
         </div>
     </header>
@@ -60,4 +60,195 @@
     <main class="container mx-auto px-4 py-8 max-w-2xl flex-grow">
         
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-slate-80
+            <h2 class="text-3xl font-bold text-slate-800">Control Web de 4 Relés</h2>
+            <p class="text-slate-500 mt-1">Control IoT Remoto vía Internet mediante Adafruit IO</p>
+        </div>
+
+        <!-- Tarjeta de Configuración de API Key (Precargada) -->
+        <div class="bg-white p-6 rounded-xl shadow border border-slate-200 mb-8">
+            <h3 class="font-bold text-slate-700 mb-4 text-base flex items-center gap-2">
+                <i data-lucide="key" class="w-5 h-5 text-blue-900"></i>
+                Credenciales de Adafruit IO
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-xs text-slate-500 font-semibold block mb-1">AIO USERNAME</label>
+                    <input type="text" id="aioUser" value="jhony2006" class="w-full border rounded-lg p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-500 font-semibold block mb-1">AIO KEY (API KEY)</label>
+                    <input type="password" id="aioKey" value="aio_sURQ72rq4dsoFfLvgjuZaVffp8k3" class="w-full border rounded-lg p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID DE RELÉS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+
+            <!-- Relé 1 -->
+            <div class="relay-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-blue-600 p-3 flex justify-between items-center text-white font-bold">
+                    <span>RELÉ 1 (GPIO 25)</span>
+                    <i data-lucide="power" class="w-5 h-5"></i>
+                </div>
+                <div class="p-5 text-center">
+                    <div id="st1" class="text-lg font-bold text-slate-400 mb-4">ESTADO: EN ESPERA</div>
+                    <div class="flex gap-2">
+                        <button onclick="sendApiCommand('R1_ON')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg w-full transition">ON</button>
+                        <button onclick="sendApiCommand('R1_OFF')" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg w-full transition">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relé 2 -->
+            <div class="relay-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-red-600 p-3 flex justify-between items-center text-white font-bold">
+                    <span>RELÉ 2 (GPIO 26)</span>
+                    <i data-lucide="power" class="w-5 h-5"></i>
+                </div>
+                <div class="p-5 text-center">
+                    <div id="st2" class="text-lg font-bold text-slate-400 mb-4">ESTADO: EN ESPERA</div>
+                    <div class="flex gap-2">
+                        <button onclick="sendApiCommand('R2_ON')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg w-full transition">ON</button>
+                        <button onclick="sendApiCommand('R2_OFF')" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg w-full transition">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relé 3 -->
+            <div class="relay-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-blue-600 p-3 flex justify-between items-center text-white font-bold">
+                    <span>RELÉ 3 (GPIO 27)</span>
+                    <i data-lucide="power" class="w-5 h-5"></i>
+                </div>
+                <div class="p-5 text-center">
+                    <div id="st3" class="text-lg font-bold text-slate-400 mb-4">ESTADO: EN ESPERA</div>
+                    <div class="flex gap-2">
+                        <button onclick="sendApiCommand('R3_ON')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg w-full transition">ON</button>
+                        <button onclick="sendApiCommand('R3_OFF')" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg w-full transition">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relé 4 -->
+            <div class="relay-card bg-white rounded-xl overflow-hidden shadow border border-slate-200">
+                <div class="bg-red-600 p-3 flex justify-between items-center text-white font-bold">
+                    <span>RELÉ 4 (GPIO 33)</span>
+                    <i data-lucide="power" class="w-5 h-5"></i>
+                </div>
+                <div class="p-5 text-center">
+                    <div id="st4" class="text-lg font-bold text-slate-400 mb-4">ESTADO: EN ESPERA</div>
+                    <div class="flex gap-2">
+                        <button onclick="sendApiCommand('R4_ON')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg w-full transition">ON</button>
+                        <button onclick="sendApiCommand('R4_OFF')" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg w-full transition">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BOTONES MAESTROS -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onclick="sendApiCommand('ALL_ON')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-xl shadow transition w-full">
+                ENCENDER TODOS
+            </button>
+            <button onclick="sendApiCommand('ALL_OFF')" class="bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-xl shadow transition w-full">
+                APAGAR TODOS
+            </button>
+        </div>
+
+        <!-- CONSOLA DE ESTADO DE LA PETICIÓN -->
+        <div id="statusLog" class="mt-6 text-center text-sm font-mono text-slate-600 min-h-[24px]"></div>
+
+    </main>
+
+    <!-- FOOTER INSTITUCIONAL -->
+    <footer class="bg-slate-900 text-slate-500 py-6 text-center text-xs border-t-4 border-red-600">
+        <p>© 2025 Instituto Superior Tecnológico Vida Nueva</p>
+    </footer>
+
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        lucide.createIcons();
+
+        function updateClock() {
+            const now = new Date();
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('es-EC', optionsDate);
+            document.getElementById('timeDisplay').textContent = now.toLocaleTimeString('es-EC');
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        async function sendApiCommand(command) {
+            const user = document.getElementById('aioUser').value.trim();
+            const key = document.getElementById('aioKey').value.trim();
+            const log = document.getElementById('statusLog');
+
+            if (!user || !key) {
+                alert("Por favor ingresa tu Username y tu API Key de Adafruit IO.");
+                return;
+            }
+
+            log.innerText = "⏳ Enviando comando a Adafruit IO...";
+            log.className = "mt-6 text-center text-sm font-mono text-blue-600 font-semibold";
+
+            const url = `https://io.adafruit.com/api/v2/${user}/feeds/reles/data?x-aio-key=${key}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ value: command })
+                });
+
+                if (response.ok) {
+                    log.innerText = `✓ Comando "${command}" ejecutado correctamente.`;
+                    log.className = "mt-6 text-center text-sm font-mono text-emerald-600 font-bold";
+                    updateRelayUI(command);
+                } else {
+                    log.innerText = `✕ Error Adafruit (${response.status}): Verifica que exista el feed llamado "reles"`;
+                    log.className = "mt-6 text-center text-sm font-mono text-red-600 font-bold";
+                }
+            } catch (error) {
+                log.innerText = "✕ Error de red al conectar con Adafruit IO.";
+                log.className = "mt-6 text-center text-sm font-mono text-red-600 font-bold";
+                console.error("Detalle del error:", error);
+            }
+        }
+
+        function updateRelayUI(cmd) {
+            const updateState = (id, isOn) => {
+                const el = document.getElementById(id);
+                if (isOn) {
+                    el.innerText = "ESTADO: ENCENDIDO";
+                    el.className = "text-lg font-bold text-emerald-600 mb-4";
+                } else {
+                    el.innerText = "ESTADO: APAGADO";
+                    el.className = "text-lg font-bold text-slate-400 mb-4";
+                }
+            };
+
+            if (cmd === 'R1_ON')  updateState('st1', true);
+            if (cmd === 'R1_OFF') updateState('st1', false);
+            if (cmd === 'R2_ON')  updateState('st2', true);
+            if (cmd === 'R2_OFF') updateState('st2', false);
+            if (cmd === 'R3_ON')  updateState('st3', true);
+            if (cmd === 'R3_OFF') updateState('st3', false);
+            if (cmd === 'R4_ON')  updateState('st4', true);
+            if (cmd === 'R4_OFF') updateState('st4', false);
+
+            if (cmd === 'ALL_ON') {
+                updateState('st1', true); updateState('st2', true);
+                updateState('st3', true); updateState('st4', true);
+            }
+            if (cmd === 'ALL_OFF') {
+                updateState('st1', false); updateState('st2', false);
+                updateState('st3', false); updateState('st4', false);
+            }
+        }
+    </script>
+</body>
+</html>
